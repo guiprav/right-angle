@@ -12,6 +12,7 @@ module.exports = {
 		if(config.jasmineNodeOpts.isVerbose === undefined) {
 			config.jasmineNodeOpts.isVerbose = true;
 		}
+		framework_config.pages_path = rightAngleConfig.pagesPath || './page';
 		framework_config.features_path = rightAngleConfig.featuresPath || './feature';
 		framework_config.steps_path = rightAngleConfig.stepsPath || './step';
 		return config;
@@ -61,6 +62,9 @@ module.exports = {
 				}
 			);
 		}
+	},
+	page: function(name) {
+		return require(resolve_path(framework_config.pages_path, name + ".js"));
 	}
 };
 function parse_step_descriptors(step_descriptors) {
