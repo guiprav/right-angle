@@ -1,21 +1,25 @@
 "use strict";
 var resolve_path = require("path").resolve;
 var glob = require("glob");
+var framework_config = {};
 var features = {};
 module.exports = {
 	configure: function(config) {
+		var rightAngleConfig = config.rightAngle || {};
 		config.specs = config.specs || [];
 		config.jasmineNodeOpts = config.jasmineNodeOpts || {};
 		config.specs.push(__dirname + "/run-spec.js");
 		if(config.jasmineNodeOpts.isVerbose === undefined) {
 			config.jasmineNodeOpts.isVerbose = true;
 		}
+		framework_config.features_path = rightAngleConfig.featuresPath || './feature';
+		framework_config.steps_path = rightAngleConfig.stepsPath || './step';
 		return config;
 	},
 	run: function() {
 		var feature_name;
 		var feature;
-		glob.sync("./feature/*.js").forEach (
+		glob.sync(resolve_path(framework_config.features_path, "*.js")).forEach (
 			function(feature_file) {
 				var feature = require(resolve_path(feature_file));
 				if(features[feature.name]) {
@@ -71,7 +75,7 @@ function parse_step_descriptors(step_descriptors) {
 	);
 }
 function execute_step(step) {
-	var bundle = require(resolve_path("./step/" + step.bundle + ".js"));
+	var bundle = require(resolve_path(framework_config.steps_path, step.bundle + ".js"));
 	it (
 		"[" + step.bundle + "] " + step.name, function() {
 			bundle[step.name].apply(bundle, step.parameters);
