@@ -1,0 +1,12 @@
+{
+  "name": "right-angle-example",
+  "version": "0.0.0",
+  "author": "Guilherme Prá Vieira (super.driver.512@gmail.com)",
+  "license": "ISC",
+  "scripts": {
+  	"test": "./node_modules/.bin/protractor"
+  },
+  "dependencies": {
+    "right-angle": "git://github.com/n2liquid/right-angle"
+  }
+}
