@@ -1,4 +1,5 @@
 "use strict";
+require('array.prototype.find');
 var resolve_path = require("path").resolve;
 var glob = require("glob");
 var framework_config = {};
