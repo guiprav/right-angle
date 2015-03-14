@@ -33,13 +33,13 @@ module.exports = {
 			feature = features[feature_name];
 			describe (
 				feature_name, function() {
-					feature.before_all = parse_step_descriptors(feature.before_all || []);
-					feature.before_each = parse_step_descriptors(feature.before_each || []);
 					describe (
 						"'Before all scenarios' steps:", function() {
+							feature.before_all = parse_step_descriptors(feature.before_all || []);
 							feature.before_all.forEach(execute_step);
 						}
 					);
+					feature.before_each = parse_step_descriptors(feature.before_each || []);
 					feature.scenarios.forEach (
 						function(scenario) {
 							describe (
