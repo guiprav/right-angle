@@ -1,4 +1,4 @@
-var tf = require('right-angle');
+var tf = require("right-angle");
 var step = tf.runStep;
 module.exports = {
 	name: "Example feature.",
