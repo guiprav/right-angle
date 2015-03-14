@@ -78,7 +78,7 @@ module.exports = {
 		bundle = require(resolve_path(framework_config.steps_path, bundle_name + '.js'));
 		step_key = Object.keys(bundle).find (
 			function(step_regex) {
-				return (step_regex_result = new RegExp(step_regex).exec(rest));
+				return (step_regex_result = new RegExp("^" + step_regex + "$").exec(rest));
 			}
 		);
 		if(!step_key) {
