@@ -1,11 +1,12 @@
 'use strict';
 var tf = require('right-angle');
+var page = tf.page;
 module.exports = {
-	"Log message": function(message) {
+	"Log '(.*)'": function(message) {
 		console.log(message);
 	},
-	"Has element": function(page_name, locator_name) {
-		expect(tf.page(page_name).find(locator_name)).toBeTruthy();
+	"Has '(.*)\\.(.*)' element": function(page_name, locator_name) {
+		expect(page(page_name).find(locator_name)).toBeTruthy();
 	},
 	"Fail": function() {
 		expect(false).toBe(true);

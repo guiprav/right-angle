@@ -34,26 +34,27 @@ module.exports = {
 			feature = features[feature_name];
 			describe (
 				feature_name, function() {
-					describe (
-						"'Before all scenarios' steps:", function() {
-							feature.before_all = parse_step_descriptors(feature.before_all || []);
-							feature.before_all.forEach(execute_step);
-						}
-					);
-					feature.before_each = parse_step_descriptors(feature.before_each || []);
+					if(feature.before_all) {
+						describe (
+							"'Before all scenarios' steps:", function() {
+								feature.before_all();
+							}
+						);
+					}
 					feature.scenarios.forEach (
 						function(scenario) {
 							describe (
 								scenario.name, function() {
-									describe (
-										"'Before scenario' steps:", function() {
-											feature.before_each.forEach(execute_step);
-										}
-									);
+									if(feature.before_each) {
+										describe (
+											"'Before scenario' steps:", function() {
+												feature.before_each();
+											}
+										);
+									}
 									describe (
 										"Steps:", function() {
-											scenario.steps = parse_step_descriptors(scenario.steps || []);
-											scenario.steps.forEach(execute_step);
+											scenario.run();
 										}
 									);
 								}
@@ -64,26 +65,32 @@ module.exports = {
 			);
 		}
 	},
+	runStep: function(step_statement) {
+		var step_statement_parts;
+		var bundle_name;
+		var bundle;
+		var rest;
+		var step_key;
+		var step_regex_result;
+		step_statement_parts = step_statement.split(':', 2);
+		bundle_name = step_statement_parts[0].toLowerCase().replace(/ /g, '-');
+		rest = step_statement_parts[1].trim();
+		bundle = require(resolve_path(framework_config.steps_path, bundle_name + '.js'));
+		step_key = Object.keys(bundle).find (
+			function(step_regex) {
+				return (step_regex_result = new RegExp(step_regex).exec(rest));
+			}
+		);
+		if(!step_key) {
+			throw new Error("No steps in bundle '" + bundle_name + "' matching \"" + rest + "\".");
+		}
+		it (
+			step_statement, function() {
+				bundle[step_key].apply(null, step_regex_result.slice(1));
+			}
+		);
+	},
 	page: function(name) {
 		return require(resolve_path(framework_config.pages_path, name + ".js"));
 	}
 };
-function parse_step_descriptors(step_descriptors) {
-	return step_descriptors.map (
-		function(step_descriptor) {
-			var step = {};
-			step.bundle = step_descriptor[0];
-			step.name = step_descriptor[1];
-			step.parameters = step_descriptor.slice(2);
-			return step;
-		}
-	);
-}
-function execute_step(step) {
-	var bundle = require(resolve_path(framework_config.steps_path, step.bundle + ".js"));
-	it (
-		"[" + step.bundle + "] " + step.name, function() {
-			bundle[step.name].apply(bundle, step.parameters);
-		}
-	);
-}

@@ -1,13 +1,15 @@
+var tf = require('right-angle');
+var step = tf.runStep;
 module.exports = {
 	name: "Example feature.",
 	scenarios: [
 		{
 			name: "Example scenario.",
-			steps: [
-				["example", "Log message", "[Example step parameter]"],
-				["example", "Has element", "example", "login-button"],
-				["example", "Fail"]
-			]
+			run: function() {
+				step("Example: Log 'A test message.'");
+				step("Example: Has 'example.login-button' element");
+				step("Example: Fail");
+			}
 		}
 	]
 };
