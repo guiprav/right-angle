@@ -2,8 +2,10 @@
 require('array.prototype.find');
 var resolve_path = require("path").resolve;
 var glob = require("glob");
+var hbs = require("handlebars");
 var framework_config = {};
 var features = {};
+var current_test_data;
 module.exports = {
 	configure: function(config) {
 		var rightAngleConfig = config.rightAngle || {};
@@ -43,20 +45,43 @@ module.exports = {
 					}
 					feature.scenarios.forEach (
 						function(scenario) {
-							describe (
-								scenario.name, function() {
-									if(feature.beforeEach) {
-										describe (
-											"'Before scenario' steps:", function() {
-												feature.beforeEach();
-											}
-										);
+							var data;
+							if(typeof(scenario.data) === 'function') {
+								data = scenario.data();
+							}
+							else {
+								data = scenario.data;
+							}
+							if(!Array.isArray(data)) {
+								data = [data];
+							}
+							data.forEach (
+								function(data) {
+									var scenario_name;
+									if(data) {
+										scenario_name = hbs.compile(scenario.name)(data);
 									}
+									else {
+										scenario_name = scenario.name;
+									}
+									current_test_data = data;
 									describe (
-										"Steps:", function() {
-											scenario.run();
+										scenario_name, function() {
+											if(feature.beforeEach) {
+												describe (
+													"'Before scenario' steps:", function() {
+														feature.beforeEach();
+													}
+												);
+											}
+											describe (
+												"Steps:", function() {
+													scenario.run(data);
+												}
+											);
 										}
 									);
+									current_test_data = null;
 								}
 							);
 						}
@@ -76,6 +101,9 @@ module.exports = {
 		step_statement_parts = /^(.+): (.+)$/.exec(step_statement);
 		bundle_name = step_statement_parts[1].toLowerCase().replace(/ /g, '-');
 		rest = step_statement_parts[2];
+		if(current_test_data) {
+			rest = hbs.compile(rest)(current_test_data);
+		}
 		bundle = require(resolve_path(framework_config.steps_path, bundle_name + '.js'));
 		step_key = Object.keys(bundle).find (
 			function(step_regex) {
