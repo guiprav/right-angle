@@ -14,6 +14,6 @@ module.exports = {
 		calc.go();
 	},
 	"I should see '(.*)' as a result": function(what) {
-		expect(calc.result()).toBe(what);
+		expect(calc.result()).toBe(what.toString());
 	}
 };
