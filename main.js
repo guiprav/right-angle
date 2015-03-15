@@ -37,11 +37,7 @@ module.exports = {
 			describe (
 				feature_name, function() {
 					if(feature.beforeAll) {
-						describe (
-							"'Before all scenarios' steps:", function() {
-								feature.beforeAll();
-							}
-						);
+						feature.beforeAll();
 					}
 					feature.scenarios.forEach (
 						function(scenario) {
@@ -68,17 +64,9 @@ module.exports = {
 									describe (
 										scenario_name, function() {
 											if(feature.beforeEach) {
-												describe (
-													"'Before scenario' steps:", function() {
-														feature.beforeEach();
-													}
-												);
+												feature.beforeEach();
 											}
-											describe (
-												"Steps:", function() {
-													scenario.run(data);
-												}
-											);
+											scenario.run(data);
 										}
 									);
 									current_test_data = null;
