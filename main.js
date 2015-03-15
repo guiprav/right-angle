@@ -72,6 +72,7 @@ module.exports = {
 		var rest;
 		var step_key;
 		var step_regex_result;
+		var other_step_parameters = [].slice.call(arguments, 1);
 		step_statement_parts = step_statement.split(':', 2);
 		bundle_name = step_statement_parts[0].toLowerCase().replace(/ /g, '-');
 		rest = step_statement_parts[1].trim();
@@ -86,7 +87,7 @@ module.exports = {
 		}
 		it (
 			step_statement, function() {
-				bundle[step_key].apply(null, step_regex_result.slice(1));
+				bundle[step_key].apply(null, step_regex_result.slice(1).concat(other_step_parameters));
 			}
 		);
 	},
