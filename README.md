@@ -104,6 +104,7 @@ Right Angle comes with [an example test automation project](example/) (a partial
 	$ npm install
 
 	# Run the WebDriver (If not yet running).
+	# This requires Protractor to be installed globally!
 	$ webdriver-manager start
 
 	# And finally, run the tests.
