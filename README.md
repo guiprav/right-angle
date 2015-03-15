@@ -73,11 +73,11 @@ Installing
 
 To install Right Angle, use `npm`:
 
-	$ npm install right-angle
+	$ npm install n2liquid/right-angle
 
 I recommend having a `package.json` file for your project and using:
 
-	$ npm install --save right-angle
+	$ npm install --save n2liquid/right-angle
 
 instead. This will install the package and add it as a dependency to your `package.json` file.
 
