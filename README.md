@@ -92,7 +92,7 @@ To run your tests, simply invoke Protractor using your own configuration file:
 Example project
 ---
 
-Right Angle comes with [an example test automation project](example/). To run it, you can do this:
+Right Angle comes with [an example test automation project](example/) (a partial port of [the official Protractor tutorial](https://angular.github.io/protractor/#/tutorial)). To run it, you can do this:
 
 	# Clone this repository.
 	$ git clone https://github.com/n2liquid/right-angle.git
