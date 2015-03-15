@@ -35,7 +35,7 @@ module.exports = {
 		for(feature_name in features) {
 			feature = features[feature_name];
 			describe (
-				feature_name, function() {
+				"Feature: " + feature_name, function() {
 					if(feature.beforeAll) {
 						feature.beforeAll();
 					}
@@ -62,7 +62,7 @@ module.exports = {
 									}
 									current_test_data = data;
 									describe (
-										scenario_name, function() {
+										"Scenario: " + scenario_name, function() {
 											if(feature.beforeEach) {
 												feature.beforeEach();
 											}
