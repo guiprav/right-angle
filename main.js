@@ -91,7 +91,7 @@ module.exports = {
 			}
 		);
 	},
-	page: function(name) {
+	loadPage: function(name) {
 		return require(resolve_path(framework_config.pages_path, name + ".js"));
 	}
 };

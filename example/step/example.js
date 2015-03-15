@@ -1,6 +1,6 @@
 "use strict";
 var tf = require("right-angle");
-var page = tf.page;
+var page = tf.loadPage;
 module.exports = {
 	"Log '(.*)'": function(message) {
 		console.log(message);
