@@ -86,7 +86,7 @@ module.exports = {
 			throw new Error("No steps in bundle '" + bundle_name + "' matching \"" + rest + "\".");
 		}
 		it (
-			step_statement, function() {
+			rest, function() {
 				bundle[step_key].apply(null, step_regex_result.slice(1).concat(other_step_parameters));
 			}
 		);
