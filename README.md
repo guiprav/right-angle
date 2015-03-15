@@ -5,11 +5,68 @@ This is a test automation framework for Protractor.
 
 It structures test suites in terms of Pages, Features, Scenarios, and Steps.
 
-Right Angle will automatically load all feature files from the 'feature/' directory and execute each of the defined feature test scenarios. Those scenarios are basically arrays of steps to be executed and their parameters.
+Right Angle will automatically load all feature files from the 'feature/' directory and execute each of the defined feature test scenarios. Those scenarios are basically functions that invoke steps. E.g.:
 
-Steps are automatically loaded from step bundle files in the 'step/' directory. Step bundles are nothing but a way to group related steps. Step grouping rules are up to you, but generally you'll have more generic bundles for common page operations, such as "Log in" and "Log out" in 'step/session.js', and more specific bundles maybe named after the features or scenarios they're used in.
+```js
+// feature/login.js:
+var tf = require("right-angle");
+var step = tf.runStep;
+module.exports = {
+	name: "Log In.",
+	scenarios: [
+		{
+			name: "Logging in with proper credentials.",
+			run: function() {
+				step("Navigation: When I go to '/login' page");
+				step (
+					"Login: I type in my credentials in the form", {
+						user: "TestUser",
+						password: "TestPassword"
+					}
+				);
+				step("Login: I submit the form");
+				step("Navigation: I should be redirected to '/home' page");
+				step("Alerts: I should see a success message containing the string 'welcome back'");
+			}
+		},
+		{
+			name: "Logging in with invalid credentials.",
+			run: function() {
+				step("Navigation: When I go to '/login' page");
+				step (
+					"Login: I type in my credentials in the form", {
+						user: "BadUser",
+						password: "BadPassword"
+					}
+				);
+				step("Login: I submit the form");
+				step("Navigation: I should be redirected to '/login' page");
+				step("Alerts: I should see an error message containing the string 'invalid user name or password'");
+			}
+		}
+	]
+};
+```
+
+Steps are automatically loaded from step bundle files in the 'step/' directory. Step bundles are nothing but a way to group related steps. Step grouping rules are up to you, but generally you'll have more generic bundles for common page operations, such as navigating to specific URLs, and more specific bundles maybe named after the features or scenarios they're used in.
+
+Step definitions are actually regular expressions, e.g.:
+
+```js
+"I get redirected to '(.*)'": function(where) {
+	expect(browser.getCurrentUrl()).toBe(where);
+}
+```
+
+Invocations like `runStep("Navigation: When I go to '/login' page")` will have their step description strings parsed to extract the bundle name (the part before the colon), and the rest will be matched against step regular expressions from that bundle. The first matched step is executed, with regular expression results passed as arguments (`"/login"`, in the case above).
+
+All other arguments passed to `runStep` are forwarded to the step function. That's useful when step parameters are too long or complicated to fit nicely in a string, or contain sensitive data (e.g. the Login example above).
+
+To derive step bundle names from step description strings, Right Angle simply converts the bundle name part of the string to lower case, replaces all spaces by dashes, and appends `".js"` to it.
 
 Pages are modules implementing the Page Object pattern: They usually contain element locators and maybe other page-specific goodies.
+
+The `page` function can be used to access those modules. E.g.: `page('login')` will require the 'page/login.js' module and return it.
 
 Installing
 ---
