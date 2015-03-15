@@ -10,38 +10,53 @@ Right Angle will automatically load all feature files from the 'feature/' direct
 ```js
 // feature/login.js:
 var tf = require("right-angle");
-var step = tf.runStep;
+var using = tf.loadSteps;
 module.exports = {
 	name: "Log In.",
+	beforeEach: function() {
+		using("Navigation")
+			.when("I go to '/login' page");
+		;
+	},
 	scenarios: [
 		{
 			name: "Logging in with proper credentials.",
 			run: function() {
-				step("Navigation: When I go to '/login' page");
-				step (
-					"Login: I type in my credentials in the form", {
-						user: "TestUser",
-						password: "TestPassword"
-					}
-				);
-				step("Login: I submit the form");
-				step("Navigation: I should be redirected to '/home' page");
-				step("Alerts: I should see a success message containing the string 'welcome back'");
+				using("Login")
+					.given (
+						"I type in my credentials in the form", {
+							user: "TestUser",
+							password: "TestPassword"
+						}
+					)
+					.when("I submit the form")
+				;
+				using("Navigation")
+					.then("I should be redirected to '/home' page")
+				;
+				using("Alerts")
+					.and("I should see a success message containing the string 'welcome back'")
+				;
 			}
 		},
 		{
 			name: "Logging in with invalid credentials.",
 			run: function() {
-				step("Navigation: When I go to '/login' page");
-				step (
-					"Login: I type in my credentials in the form", {
-						user: "BadUser",
-						password: "BadPassword"
-					}
-				);
-				step("Login: I submit the form");
-				step("Navigation: I should be redirected to '/login' page");
-				step("Alerts: I should see an error message containing the string 'invalid user name or password'");
+				using("Login")
+					.given (
+						"I type in my credentials in the form", {
+							user: "BadUser",
+							password: "BadPassword"
+						}
+					)
+					.when("I submit the form")
+				;
+				using("Navigation")
+					.then("I should be redirected to '/login' page")
+				;
+				using("Alerts")
+					.and("I should see an error message containing the string 'invalid user name or password'")
+				;
 			}
 		}
 	]
@@ -62,11 +77,11 @@ Step definitions are actually regular expressions, e.g.:
 }
 ```
 
-Invocations like `runStep("Navigation: When I go to '/login' page")` will have their step description strings parsed to extract the bundle name (the part before the colon), and the rest will be matched against step regular expressions from that bundle. The first matched step is executed, with regular expression results passed as arguments (`"/login"`, in the case above).
+Invocations like `using("Navigation").when("When I go to '/login' page")` will have their step descriptions ("When I go to '/login' page") matched against step regular expressions from that bundle ("Navigation"). The first matched step is executed, with regular expression results passed as arguments (`"/login"`, in the case above).
 
-All other arguments passed to `runStep` are forwarded to the step function. That's useful when step parameters are too long or complicated to fit nicely in a string, or contain sensitive data (e.g. the Login example above).
+All other arguments passed to `given`, `and`, `when`, and `then` are forwarded to the step function. That's useful when step parameters are too long or complicated to fit nicely in a string, or contain sensitive data (e.g. the Login example above).
 
-To derive step bundle names from step description strings, Right Angle simply converts the bundle name part of the string to lower case, replaces all spaces by dashes, and appends `".js"` to it.
+To derive step bundle file names from `using` invocations, Right Angle simply converts the name to lower case, replaces all spaces by dashes, and appends `".js"` to it.
 
 Pages are modules implementing the Page Object pattern: They usually contain element locators and maybe other page-specific goodies.
 
