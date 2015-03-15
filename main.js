@@ -73,9 +73,9 @@ module.exports = {
 		var step_key;
 		var step_regex_result;
 		var other_step_parameters = [].slice.call(arguments, 1);
-		step_statement_parts = step_statement.split(':', 2);
-		bundle_name = step_statement_parts[0].toLowerCase().replace(/ /g, '-');
-		rest = step_statement_parts[1].trim();
+		step_statement_parts = /^(.+): (.+)$/.exec(step_statement);
+		bundle_name = step_statement_parts[1].toLowerCase().replace(/ /g, '-');
+		rest = step_statement_parts[2];
 		bundle = require(resolve_path(framework_config.steps_path, bundle_name + '.js'));
 		step_key = Object.keys(bundle).find (
 			function(step_regex) {
