@@ -34,10 +34,10 @@ module.exports = {
 			feature = features[feature_name];
 			describe (
 				feature_name, function() {
-					if(feature.before_all) {
+					if(feature.beforeAll) {
 						describe (
 							"'Before all scenarios' steps:", function() {
-								feature.before_all();
+								feature.beforeAll();
 							}
 						);
 					}
@@ -45,10 +45,10 @@ module.exports = {
 						function(scenario) {
 							describe (
 								scenario.name, function() {
-									if(feature.before_each) {
+									if(feature.beforeEach) {
 										describe (
 											"'Before scenario' steps:", function() {
-												feature.before_each();
+												feature.beforeEach();
 											}
 										);
 									}
