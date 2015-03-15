@@ -48,6 +48,10 @@ module.exports = {
 };
 ```
 
+If a scenario has a `data` property (either a value, an array of values, or a function returning one of those two), its `run` function is invoked once for every value in the array (or once if `data` isn't an array or hasn't returned an array). In those cases, `run`'s first argument is the data for each run. Such scenarios are said to be data-driven.
+
+Data-driven scenario names and step descriptions are actually Handlebars templates which are fed with each run's test data. See [example/feature/basic-calculation.js](example/feature/basic-calculation.js) for an example, and see [this terminal session](http://asciinema.org/a/17703) to see it working.
+
 Steps are automatically loaded from step bundle files in the 'step/' directory. Step bundles are nothing but a way to group related steps. Step grouping rules are up to you, but generally you'll have more generic bundles for common page operations, such as navigating to specific URLs, and more specific bundles maybe named after the features or scenarios they're used in.
 
 Step definitions are actually regular expressions, e.g.:
