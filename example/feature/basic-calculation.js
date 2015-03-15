@@ -1,19 +1,23 @@
 var tf = require("right-angle");
-var step = tf.runStep;
+var using = tf.loadSteps;
 module.exports = {
 	name: "Basic Calculations.",
 	beforeEach: function() {
-		step("Navigation: I go to 'https://juliemr.github.io/protractor-demo/'");
+		using("Navigation")
+			.when("I go to 'https://juliemr.github.io/protractor-demo/'")
+		;
 	},
 	scenarios: [
 		{
 			name: "Add '{{first}}' and '{{second}}'.",
 			run: function(data) {
-				step("Basic Calculation: I type '{{first}}' in the first number field");
-				step("Basic Calculation: I select '{{operator}}' from the operators dropdown");
-				step("Basic Calculation: I type '{{second}}' in the second number field");
-				step("Basic Calculation: I click 'Go!'");
-				step("Basic Calculation: I should see '{{result}}' as a result");
+				using("Basic Calculation")
+					.given("I type '{{first}}' in the first number field")
+					.and("I select '{{operator}}' from the operators dropdown")
+					.and("I type '{{second}}' in the second number field")
+					.when("I click 'Go!'")
+					.then("I should see '{{result}}' as a result")
+				;
 			},
 			data: function() {
 				return [

@@ -78,36 +78,60 @@ module.exports = {
 			);
 		}
 	},
-	runStep: function(step_statement) {
-		var step_statement_parts;
-		var bundle_name;
+	loadSteps: function(bundle_name) {
 		var bundle;
-		var rest;
-		var step_key;
-		var step_regex_result;
-		var other_step_parameters = [].slice.call(arguments, 1);
-		step_statement_parts = /^(.+): (.+)$/.exec(step_statement);
-		bundle_name = step_statement_parts[1].toLowerCase().replace(/ /g, '-');
-		rest = step_statement_parts[2];
-		if(current_test_data) {
-			rest = hbs.compile(rest)(current_test_data);
-		}
+		bundle_name = bundle_name.toLowerCase().replace(/ /g, "-");
 		bundle = require(resolve_path(framework_config.steps_path, bundle_name + '.js'));
-		step_key = Object.keys(bundle).find (
-			function(step_regex) {
-				return (step_regex_result = new RegExp("^" + step_regex + "$").exec(rest));
-			}
-		);
-		if(!step_key) {
-			throw new Error("No steps in bundle '" + bundle_name + "' matching \"" + rest + "\".");
-		}
-		it (
-			rest, function() {
-				bundle[step_key].apply(null, step_regex_result.slice(1).concat(other_step_parameters));
-			}
-		);
+		return new CucumberWrapper(bundle_name, bundle);
 	},
 	loadPage: function(name) {
 		return require(resolve_path(framework_config.pages_path, name + ".js"));
 	}
 };
+function CucumberWrapper(bundle_name, bundle) {
+	this.bundle_name = bundle_name;
+	this.bundle = bundle;
+}
+CucumberWrapper.prototype.given = function() {
+	return this.runStep.apply (
+		this, ["Given"].concat([].slice.call(arguments, 0))
+	);
+};
+CucumberWrapper.prototype.and = function() {
+	return this.runStep.apply (
+		this, ["And"].concat([].slice.call(arguments, 0))
+	);
+};
+CucumberWrapper.prototype.when = function() {
+	return this.runStep.apply (
+		this, ["When"].concat([].slice.call(arguments, 0))
+	);
+};
+CucumberWrapper.prototype.then = function() {
+	return this.runStep.apply (
+		this, ["Then"].concat([].slice.call(arguments, 0))
+	);
+};
+CucumberWrapper.prototype.runStep = function(prefix, statement) {
+	var wrapper = this;
+	var step_key;
+	var step_regex_result;
+	var extra_step_parameters = [].slice.call(arguments, 2);
+	if(current_test_data) {
+		statement = hbs.compile(statement)(current_test_data);
+	}
+	step_key = Object.keys(wrapper.bundle).find (
+		function(step_regex) {
+			return (step_regex_result = new RegExp("^" + step_regex + "$").exec(statement));
+		}
+	);
+	if(!step_key) {
+		throw new Error("No steps in bundle '" + wrapper.bundle_name + "' matching \"" + statement + "\".");
+	}
+	it (
+		prefix + " " + statement, function() {
+			wrapper.bundle[step_key].apply(null, step_regex_result.slice(1).concat(extra_step_parameters));
+		}
+	);
+	return wrapper;
+}
