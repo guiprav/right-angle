@@ -113,25 +113,36 @@ CucumberWrapper.prototype.then = function() {
 	);
 };
 CucumberWrapper.prototype.runStep = function(prefix, statement) {
-	var wrapper = this;
 	var step_key;
 	var step_regex_result;
 	var extra_step_parameters = [].slice.call(arguments, 2);
+	var step;
+	var step_fn;
+	var jasmine_fn;
 	if(current_test_data) {
 		statement = hbs.compile(statement)(current_test_data);
 	}
-	step_key = Object.keys(wrapper.bundle).find (
+	step_key = Object.keys(this.bundle).find (
 		function(step_regex) {
 			return (step_regex_result = new RegExp("^" + step_regex + "$").exec(statement));
 		}
 	);
 	if(!step_key) {
-		throw new Error("No steps in bundle '" + wrapper.bundle_name + "' matching \"" + statement + "\".");
+		throw new Error("No steps in bundle '" + this.bundle_name + "' matching \"" + statement + "\".");
 	}
-	it (
+	step = this.bundle[step_key];
+	if(step.composite) {
+		jasmine_fn = describe;
+		step_fn = step.run;
+	}
+	else {
+		jasmine_fn = it;
+		step_fn = step;
+	}
+	jasmine_fn (
 		prefix + " " + statement, function() {
-			wrapper.bundle[step_key].apply(null, step_regex_result.slice(1).concat(extra_step_parameters));
+			step_fn.apply(null, step_regex_result.slice(1).concat(extra_step_parameters));
 		}
 	);
-	return wrapper;
+	return this;
 }
