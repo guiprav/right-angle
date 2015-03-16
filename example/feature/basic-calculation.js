@@ -9,22 +9,70 @@ module.exports = {
 	},
 	scenarios: [
 		{
-			name: "Add '{{first}}' and '{{second}}'.",
+			name: "Add two numbers",
 			run: function(data) {
 				using("Basic Calculation")
-					.given("I type '{{first}}' in the first number field")
-					.and("I select '{{operator}}' from the operators dropdown")
-					.and("I type '{{second}}' in the second number field")
-					.when("I click 'Go!'")
+					.given("I add '{{first}}' and '{{second}}'")
 					.then("I should see '{{result}}' as a result")
 				;
 			},
 			data: function() {
 				return [
-					{ operator: '+', first: 1, second: 2, result: 3 },
-					{ operator: '-', first: 3, second: 2, result: 1 },
-					{ operator: '*', first: 2, second: 3, result: 6 },
-					{ operator: '/', first: 8, second: 2, result: 4 }
+					{ first: 1, second: 2, result: 3 },
+					{ first: 2, second: 8, result: 10 },
+					{ first: 3, second: 4, result: 7 },
+					{ first: 4, second: 5, result: 9 }
+				];
+			}
+		},
+		{
+			name: "Subtract two numbers",
+			run: function(data) {
+				using("Basic Calculation")
+					.given("I subtract '{{first}}' from '{{second}}'")
+					.then("I should see '{{result}}' as a result")
+				;
+			},
+			data: function() {
+				return [
+					{ first: 1, second: 2, result: 1 },
+					{ first: 2, second: 8, result: 6 },
+					{ first: 3, second: 4, result: 1 },
+					{ first: 4, second: 5, result: 1 }
+				];
+			}
+		},
+		{
+			name: "Multiply two numbers",
+			run: function(data) {
+				using("Basic Calculation")
+					.given("I multiply '{{first}}' by '{{second}}'")
+					.then("I should see '{{result}}' as a result")
+				;
+			},
+			data: function() {
+				return [
+					{ first: 1, second: 2, result: 2 },
+					{ first: 2, second: 8, result: 16 },
+					{ first: 3, second: 4, result: 12 },
+					{ first: 4, second: 5, result: 20 }
+				];
+			}
+		},
+		{
+			name: "Divide two numbers",
+			run: function(data) {
+				using("Basic Calculation")
+					.given("I divide '{{first}}' by '{{second}}'")
+					.then("I should see '{{result}}' as a result")
+				;
+			},
+			data: function() {
+				return [
+					{ first: 1, second: 2, result: 0.5 },
+					{ first: 2, second: 8, result: 0.25 },
+					{ first: 3, second: 4, result: 0.75 },
+					{ first: 4, second: 5, result: 0.8 }
 				];
 			}
 		}

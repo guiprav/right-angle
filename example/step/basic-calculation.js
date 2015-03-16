@@ -1,6 +1,33 @@
 var tf = require("right-angle");
+var using = tf.loadSteps;
 var calc = tf.loadPage("calculator");
 module.exports = {
+	"I (add|subtract|multiply|divide) '(.*)' (and|by|from) '(.*)'": {
+		composite: true,
+		run: function(operation, first, conjunction, second) {
+			var operator = {
+				"add": "+",
+				"subtract": "-",
+				"multiply": "*",
+				"divide": "/"
+			} [
+				operation
+			];
+			if(conjunction === 'from') {
+				(function() {
+					var tmp = first;
+					first = second;
+					second = tmp;
+				})();
+			}
+			using("Basic Calculation")
+				.given("I type '" + first + "' in the first number field")
+				.and("I select '" + operator + "' from the operators dropdown")
+				.and("I type '" + second + "' in the second number field")
+				.and("I click 'Go!'")
+			;
+		}
+	},
 	"I type '(.*)' in the first number field": function(what) {
 		calc.enterFirstNumber(what);
 	},
