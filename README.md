@@ -18,52 +18,48 @@ module.exports = {
 			.when("I go to '/login' page");
 		;
 	},
-	scenarios: [
-		{
-			name: "Logging in with proper credentials.",
-			run: function() {
-				using("Login")
-					.given (
-						"I type in my credentials in the form", {
-							user: "TestUser",
-							password: "TestPassword"
-						}
-					)
-					.when("I submit the form")
-				;
-				using("Navigation")
-					.then("I should be redirected to '/home' page")
-				;
-				using("Alerts")
-					.and("I should see a success message containing the string 'welcome back'")
-				;
-			}
+	scenarios: {
+		"Logging in with proper credentials.": function() {
+			using("Login")
+				.given (
+					"I type in my credentials in the form", {
+						user: "TestUser",
+						password: "TestPassword"
+					}
+				)
+				.when("I submit the form")
+			;
+			using("Navigation")
+				.then("I should be redirected to '/home' page")
+			;
+			using("Alerts")
+				.and("I should see a success message containing the string 'welcome back'")
+			;
 		},
-		{
-			name: "Logging in with invalid credentials.",
-			run: function() {
-				using("Login")
-					.given (
-						"I type in my credentials in the form", {
-							user: "BadUser",
-							password: "BadPassword"
-						}
-					)
-					.when("I submit the form")
-				;
-				using("Navigation")
-					.then("I should be redirected to '/login' page")
-				;
-				using("Alerts")
-					.and("I should see an error message containing the string 'invalid user name or password'")
-				;
-			}
+		"Logging in with invalid credentials.": function() {
+			using("Login")
+				.given (
+					"I type in my credentials in the form", {
+						user: "BadUser",
+						password: "BadPassword"
+					}
+				)
+				.when("I submit the form")
+			;
+			using("Navigation")
+				.then("I should be redirected to '/login' page")
+			;
+			using("Alerts")
+				.and("I should see an error message containing the string 'invalid user name or password'")
+			;
 		}
-	]
+	}
 };
 ```
 
-If a scenario has a `data` property (either a value, an array of values, or a function returning one of those two), its `run` function is invoked once for every value in the array (or once if `data` isn't an array or hasn't returned an array). In those cases, `run`'s first argument is the data for each run. Such scenarios are said to be data-driven.
+Some scenarios are single functions, but not all.
+
+If a scenario is an object with a `data` property (either a value, an array of values, or a function returning one of those two), its `run` function is invoked once for every value in the array (or once if `data` isn't an array or hasn't returned an array). In those cases, `run`'s first argument is the data for each run. Such scenarios are said to be data-driven.
 
 Data-driven scenario names and step descriptions are actually Handlebars templates which are fed with each run's test data. See [example/feature/basic-calculation.js](example/feature/basic-calculation.js) for an example, and see [this terminal session](http://asciinema.org/a/17703) to see it working.
 

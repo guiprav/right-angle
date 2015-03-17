@@ -36,44 +36,52 @@ module.exports = {
 			feature = features[feature_name];
 			describe (
 				"Feature: " + feature_name, function() {
+					var scenario_name;
+					var scenario;
+					var scenario_run;
+					var data;
 					if(feature.beforeAll) {
 						feature.beforeAll();
 					}
-					feature.scenarios.forEach (
-						function(scenario) {
-							var data;
+					for(scenario_name in feature.scenarios) {
+						scenario = feature.scenarios[scenario_name];
+						if(typeof(scenario) === "function") {
+							scenario_run = scenario;
+						}
+						else {
+							scenario_run = scenario.run;
 							if(typeof(scenario.data) === 'function') {
 								data = scenario.data();
 							}
 							else {
 								data = scenario.data;
 							}
-							if(!Array.isArray(data)) {
-								data = [data];
-							}
-							data.forEach (
-								function(data) {
-									var scenario_name;
-									if(data) {
-										scenario_name = hbs.compile(scenario.name)(data);
-									}
-									else {
-										scenario_name = scenario.name;
-									}
-									current_test_data = data;
-									describe (
-										"Scenario: " + scenario_name, function() {
-											if(feature.beforeEach) {
-												feature.beforeEach();
-											}
-											scenario.run(data);
-										}
-									);
-									current_test_data = null;
-								}
-							);
 						}
-					);
+						if(!Array.isArray(data)) {
+							data = [data];
+						}
+						data.forEach (
+							function(data) {
+								var scenario_run_name;
+								if(data) {
+									scenario_run_name = hbs.compile(scenario_name)(data);
+								}
+								else {
+									scenario_run_name = scenario_name;
+								}
+								current_test_data = data;
+								describe (
+									"Scenario: " + scenario_run_name, function() {
+										if(feature.beforeEach) {
+											feature.beforeEach();
+										}
+										scenario_run(data);
+									}
+								);
+								current_test_data = null;
+							}
+						);
+					}
 				}
 			);
 		}

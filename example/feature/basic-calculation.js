@@ -7,9 +7,8 @@ module.exports = {
 			.when("I go to 'https://juliemr.github.io/protractor-demo/'")
 		;
 	},
-	scenarios: [
-		{
-			name: "Add two numbers",
+	scenarios: {
+		"Add two numbers": {
 			run: function(data) {
 				using("Basic Calculation")
 					.given("I add '{{first}}' and '{{second}}'")
@@ -25,8 +24,7 @@ module.exports = {
 				];
 			}
 		},
-		{
-			name: "Subtract two numbers",
+		"Subtract two numbers": {
 			run: function(data) {
 				using("Basic Calculation")
 					.given("I subtract '{{first}}' from '{{second}}'")
@@ -42,8 +40,7 @@ module.exports = {
 				];
 			}
 		},
-		{
-			name: "Multiply two numbers",
+		"Multiply two numbers": {
 			run: function(data) {
 				using("Basic Calculation")
 					.given("I multiply '{{first}}' by '{{second}}'")
@@ -59,8 +56,7 @@ module.exports = {
 				];
 			}
 		},
-		{
-			name: "Divide two numbers",
+		"Divide two numbers": {
 			run: function(data) {
 				using("Basic Calculation")
 					.given("I divide '{{first}}' by '{{second}}'")
@@ -76,5 +72,5 @@ module.exports = {
 				];
 			}
 		}
-	]
+	}
 };
