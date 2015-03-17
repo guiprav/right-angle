@@ -131,6 +131,7 @@ global.then = function() {
 	);
 };
 function runStep(prefix, statement) {
+	var matching_step_keys;
 	var step_key;
 	var step_regex_result;
 	var extra_step_parameters = [].slice.call(arguments, 2);
@@ -140,13 +141,25 @@ function runStep(prefix, statement) {
 	if(current_run_context) {
 		statement = hbs.compile(statement)(current_run_context);
 	}
-	step_key = Object.keys(steps).find (
+	matching_step_keys = Object.keys(steps).filter (
 		function(step_regex) {
-			return (step_regex_result = new RegExp("^" + step_regex + "$").exec(statement));
+			var result = new RegExp("^" + step_regex + "$").exec(statement);
+			if(result) {
+				step_regex_result = result;
+			}
+			return !!result;
 		}
 	);
-	if(!step_key) {
-		throw new Error("No step matching \"" + statement + "\".");
+	switch(matching_step_keys.length) {
+		case 0:
+			throw new Error("No step matching \"" + statement + "\".");
+		case 1:
+			step_key = matching_step_keys[0];
+			break;
+		default:
+			throw new Error (
+				matching_step_keys.length + " steps match ambiguous statement \"" + statement + "\"."
+			);
 	}
 	step = steps[step_key];
 	if(step.composite) {
