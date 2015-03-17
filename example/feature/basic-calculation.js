@@ -1,19 +1,14 @@
 var tf = require("right-angle");
-var using = tf.loadSteps;
 module.exports = {
 	name: "Basic Calculations.",
 	beforeEach: function() {
-		using("Navigation")
-			.when("I go to 'https://juliemr.github.io/protractor-demo/'")
-		;
+		when("I go to 'https://juliemr.github.io/protractor-demo/'");
 	},
 	scenarios: {
 		"Add two numbers": {
 			run: function() {
-				using("Basic Calculation")
-					.given("I add '{{first}}' and '{{second}}'")
-					.then("I should see '{{result}}' as a result")
-				;
+				given("I add '{{first}}' and '{{second}}'");
+				then("I should see '{{result}}' as a result");
 			},
 			data: function() {
 				return [
@@ -26,10 +21,8 @@ module.exports = {
 		},
 		"Subtract two numbers": {
 			run: function() {
-				using("Basic Calculation")
-					.given("I subtract '{{first}}' from '{{second}}'")
-					.then("I should see '{{result}}' as a result")
-				;
+				given("I subtract '{{first}}' from '{{second}}'");
+				then("I should see '{{result}}' as a result");
 			},
 			data: function() {
 				return [
@@ -42,10 +35,8 @@ module.exports = {
 		},
 		"Multiply two numbers": {
 			run: function() {
-				using("Basic Calculation")
-					.given("I multiply '{{first}}' by '{{second}}'")
-					.then("I should see '{{result}}' as a result")
-				;
+				given("I multiply '{{first}}' by '{{second}}'");
+				then("I should see '{{result}}' as a result");
 			},
 			data: function() {
 				return [
@@ -58,10 +49,8 @@ module.exports = {
 		},
 		"Divide two numbers": {
 			run: function() {
-				using("Basic Calculation")
-					.given("I divide '{{first}}' by '{{second}}'")
-					.then("I should see '{{result}}' as a result")
-				;
+				given("I divide '{{first}}' by '{{second}}'");
+				then("I should see '{{result}}' as a result");
 			},
 			data: function() {
 				return [

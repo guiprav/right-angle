@@ -1,5 +1,4 @@
 var tf = require("right-angle");
-var using = tf.loadSteps;
 var calc = tf.loadPage("calculator");
 module.exports = {
 	"I (add|subtract|multiply|divide) '(.*)' (and|by|from) '(.*)'": {
@@ -20,12 +19,10 @@ module.exports = {
 					second = tmp;
 				})();
 			}
-			using("Basic Calculation")
-				.given("I type '" + first + "' in the first number field")
-				.and("I select '" + operator + "' from the operators dropdown")
-				.and("I type '" + second + "' in the second number field")
-				.and("I click 'Go!'")
-			;
+			given("I type '" + first + "' in the first number field");
+			and("I select '" + operator + "' from the operators dropdown");
+			and("I type '" + second + "' in the second number field");
+			and("I click 'Go!'");
 		}
 	},
 	"I type '(.*)' in the first number field": function(what) {

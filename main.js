@@ -1,10 +1,12 @@
 "use strict";
 require('array.prototype.find');
 var resolve_path = require("path").resolve;
+var basename = require("path").basename;
 var glob = require("glob");
 var hbs = require("handlebars");
 var framework_config = {};
 var features = {};
+var steps = {};
 var current_run_context;
 module.exports = {
 	configure: function(config) {
@@ -30,6 +32,24 @@ module.exports = {
 					throw new Error("Feature \"" + feature.name + "\" is already defined.");
 				}
 				features[feature.name] = feature;
+			}
+		);
+		glob.sync(resolve_path(framework_config.steps_path, "*.js")).forEach (
+			function(bundle_file) {
+				var bundle = require(resolve_path(bundle_file));
+				var step_regex;
+				var step;
+				for(step_regex in bundle) {
+					if(steps[step_regex] !== undefined) {
+						throw new Error (
+							"Step regular expression /" + step_regex + "/ is already defined "
+							+ "(in bundle '" + steps[step_regex].bundle_file + "')"
+						);
+					}
+					step = bundle[step_regex];
+					step.bundle_file = basename(bundle_file);
+					steps[step_regex] = step;
+				}
 			}
 		);
 		for(feature_name in features) {
@@ -86,41 +106,31 @@ module.exports = {
 			);
 		}
 	},
-	loadSteps: function(bundle_name) {
-		var bundle;
-		bundle_name = bundle_name.toLowerCase().replace(/ /g, "-");
-		bundle = require(resolve_path(framework_config.steps_path, bundle_name + '.js'));
-		return new CucumberWrapper(bundle_name, bundle);
-	},
 	loadPage: function(name) {
 		return require(resolve_path(framework_config.pages_path, name + ".js"));
 	}
 };
-function CucumberWrapper(bundle_name, bundle) {
-	this.bundle_name = bundle_name;
-	this.bundle = bundle;
-}
-CucumberWrapper.prototype.given = function() {
-	return this.runStep.apply (
-		this, ["Given"].concat([].slice.call(arguments, 0))
+global.given = function() {
+	return runStep.apply (
+		null, ["Given"].concat([].slice.call(arguments, 0))
 	);
 };
-CucumberWrapper.prototype.and = function() {
-	return this.runStep.apply (
-		this, ["And"].concat([].slice.call(arguments, 0))
+global.and = function() {
+	return runStep.apply (
+		null, ["And"].concat([].slice.call(arguments, 0))
 	);
 };
-CucumberWrapper.prototype.when = function() {
-	return this.runStep.apply (
-		this, ["When"].concat([].slice.call(arguments, 0))
+global.when = function() {
+	return runStep.apply (
+		null, ["When"].concat([].slice.call(arguments, 0))
 	);
 };
-CucumberWrapper.prototype.then = function() {
-	return this.runStep.apply (
-		this, ["Then"].concat([].slice.call(arguments, 0))
+global.then = function() {
+	return runStep.apply (
+		null, ["Then"].concat([].slice.call(arguments, 0))
 	);
 };
-CucumberWrapper.prototype.runStep = function(prefix, statement) {
+function runStep(prefix, statement) {
 	var step_key;
 	var step_regex_result;
 	var extra_step_parameters = [].slice.call(arguments, 2);
@@ -130,15 +140,15 @@ CucumberWrapper.prototype.runStep = function(prefix, statement) {
 	if(current_run_context) {
 		statement = hbs.compile(statement)(current_run_context);
 	}
-	step_key = Object.keys(this.bundle).find (
+	step_key = Object.keys(steps).find (
 		function(step_regex) {
 			return (step_regex_result = new RegExp("^" + step_regex + "$").exec(statement));
 		}
 	);
 	if(!step_key) {
-		throw new Error("No steps in bundle '" + this.bundle_name + "' matching \"" + statement + "\".");
+		throw new Error("No step matching \"" + statement + "\".");
 	}
-	step = this.bundle[step_key];
+	step = steps[step_key];
 	if(step.composite) {
 		jasmine_fn = describe;
 		step_fn = step.run;
@@ -152,5 +162,4 @@ CucumberWrapper.prototype.runStep = function(prefix, statement) {
 			step_fn.apply(current_run_context, step_regex_result.slice(1).concat(extra_step_parameters));
 		}
 	);
-	return this;
 }
