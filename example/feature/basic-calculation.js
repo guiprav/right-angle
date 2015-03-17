@@ -9,7 +9,7 @@ module.exports = {
 	},
 	scenarios: {
 		"Add two numbers": {
-			run: function(data) {
+			run: function() {
 				using("Basic Calculation")
 					.given("I add '{{first}}' and '{{second}}'")
 					.then("I should see '{{result}}' as a result")
@@ -25,7 +25,7 @@ module.exports = {
 			}
 		},
 		"Subtract two numbers": {
-			run: function(data) {
+			run: function() {
 				using("Basic Calculation")
 					.given("I subtract '{{first}}' from '{{second}}'")
 					.then("I should see '{{result}}' as a result")
@@ -41,7 +41,7 @@ module.exports = {
 			}
 		},
 		"Multiply two numbers": {
-			run: function(data) {
+			run: function() {
 				using("Basic Calculation")
 					.given("I multiply '{{first}}' by '{{second}}'")
 					.then("I should see '{{result}}' as a result")
@@ -57,7 +57,7 @@ module.exports = {
 			}
 		},
 		"Divide two numbers": {
-			run: function(data) {
+			run: function() {
 				using("Basic Calculation")
 					.given("I divide '{{first}}' by '{{second}}'")
 					.then("I should see '{{result}}' as a result")

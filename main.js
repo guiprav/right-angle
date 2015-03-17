@@ -5,7 +5,7 @@ var glob = require("glob");
 var hbs = require("handlebars");
 var framework_config = {};
 var features = {};
-var current_test_data;
+var current_run_context;
 module.exports = {
 	configure: function(config) {
 		var rightAngleConfig = config.rightAngle || {};
@@ -69,16 +69,16 @@ module.exports = {
 								else {
 									scenario_run_name = scenario_name;
 								}
-								current_test_data = data;
+								current_run_context = data || {};
 								describe (
 									"Scenario: " + scenario_run_name, function() {
 										if(feature.beforeEach) {
-											feature.beforeEach();
+											feature.beforeEach.call(current_run_context);
 										}
 										scenario_run(data);
 									}
 								);
-								current_test_data = null;
+								current_run_context = null;
 							}
 						);
 					}
@@ -127,8 +127,8 @@ CucumberWrapper.prototype.runStep = function(prefix, statement) {
 	var step;
 	var step_fn;
 	var jasmine_fn;
-	if(current_test_data) {
-		statement = hbs.compile(statement)(current_test_data);
+	if(current_run_context) {
+		statement = hbs.compile(statement)(current_run_context);
 	}
 	step_key = Object.keys(this.bundle).find (
 		function(step_regex) {
@@ -149,7 +149,7 @@ CucumberWrapper.prototype.runStep = function(prefix, statement) {
 	}
 	jasmine_fn (
 		prefix + " " + statement, function() {
-			step_fn.apply(null, step_regex_result.slice(1).concat(extra_step_parameters));
+			step_fn.apply(current_run_context, step_regex_result.slice(1).concat(extra_step_parameters));
 		}
 	);
 	return this;
