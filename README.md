@@ -3,85 +3,9 @@ Right Angle
 
 This is a test automation framework for Protractor.
 
-It structures test suites in terms of Pages, Features, Scenarios, and Steps.
+I got tired of updating this README file as I explore Right Angle's API design possibilities, so I'll try again when it's more stable.
 
-Right Angle will automatically load all feature files from the 'feature/' directory and execute each of the defined feature test scenarios. Those scenarios are basically functions that invoke steps. E.g.:
-
-```js
-// feature/login.js:
-var tf = require("right-angle");
-var using = tf.loadSteps;
-module.exports = {
-	name: "Log In.",
-	beforeEach: function() {
-		using("Navigation")
-			.when("I go to '/login' page");
-		;
-	},
-	scenarios: {
-		"Logging in with proper credentials.": function() {
-			using("Login")
-				.given (
-					"I type in my credentials in the form", {
-						user: "TestUser",
-						password: "TestPassword"
-					}
-				)
-				.when("I submit the form")
-			;
-			using("Navigation")
-				.then("I should be redirected to '/home' page")
-			;
-			using("Alerts")
-				.and("I should see a success message containing the string 'welcome back'")
-			;
-		},
-		"Logging in with invalid credentials.": function() {
-			using("Login")
-				.given (
-					"I type in my credentials in the form", {
-						user: "BadUser",
-						password: "BadPassword"
-					}
-				)
-				.when("I submit the form")
-			;
-			using("Navigation")
-				.then("I should be redirected to '/login' page")
-			;
-			using("Alerts")
-				.and("I should see an error message containing the string 'invalid user name or password'")
-			;
-		}
-	}
-};
-```
-
-Some scenarios are single functions, but not all.
-
-If a scenario is an object with a `data` property (either a value, an array of values, or a function returning one of those two), its `run` function is invoked once for every value in the array (or once if `data` isn't an array or hasn't returned an array). In those cases, `run`'s first argument is the data for each run. Such scenarios are said to be data-driven.
-
-Data-driven scenario names and step descriptions are actually Handlebars templates which are fed with each run's test data. See [example/feature/basic-calculation.js](example/feature/basic-calculation.js) for an example, and see [this terminal session](http://asciinema.org/a/17703) to see it working.
-
-Steps are automatically loaded from step bundle files in the 'step/' directory. Step bundles are nothing but a way to group related steps. Step grouping rules are up to you, but generally you'll have more generic bundles for common page operations, such as navigating to specific URLs, and more specific bundles maybe named after the features or scenarios they're used in.
-
-Step definitions are actually regular expressions, e.g.:
-
-```js
-"I get redirected to '(.*)'": function(where) {
-	expect(browser.getCurrentUrl()).toBe(where);
-}
-```
-
-Invocations like `using("Navigation").when("When I go to '/login' page")` will have their step descriptions ("When I go to '/login' page") matched against step regular expressions from that bundle ("Navigation"). The first matched step is executed, with regular expression results passed as arguments (`"/login"`, in the case above).
-
-All other arguments passed to `given`, `and`, `when`, and `then` are forwarded to the step function. That's useful when step parameters are too long or complicated to fit nicely in a string, or contain sensitive data (e.g. the Login example above).
-
-To derive step bundle file names from `using` invocations, Right Angle simply converts the name to lower case, replaces all spaces by dashes, and appends `".js"` to it.
-
-Pages are modules implementing the Page Object pattern: They usually contain element locators and maybe other page-specific goodies.
-
-The `page` function can be used to access those modules. E.g.: `page('login')` will require the 'page/login.js' module and return it.
+You can see it doing its thing here: [asciinema.org/a/17746](https://asciinema.org/a/17746).
 
 Installing
 ---
